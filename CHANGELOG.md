@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.2] - 2026-09-14
+
+### Cambiado
+- Se elimina del sitio espejado la tarjeta informativa «Evita los baneos», incluso si HentaiLA la reinserta durante la hidratación.
+
 ## [0.1.1] - 2026-09-14
 
 ### Cambiado
