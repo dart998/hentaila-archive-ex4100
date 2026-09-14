@@ -27,7 +27,7 @@ El stack completo está en [`docker-compose.yml`](docker-compose.yml). Sus valor
 | --- | --- |
 | Puerto web | `8091` |
 | Datos y SQLite | `/mnt/HD/HD_a2/Public/hentaila-archive` |
-| Vídeos | `/mnt/HD/HD_a2/Public/HentaiLA` |
+| Vídeos | `/mnt/HD/HD_a2/Public/Anime/Hentai` |
 | Imagen | `ovelayos/hentaila-archive-ex4100:0.1.0` |
 
 Después de desplegar:

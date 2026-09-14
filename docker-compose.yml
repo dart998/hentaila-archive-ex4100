@@ -33,4 +33,4 @@ services:
 
     volumes:
       - /mnt/HD/HD_a2/Public/hentaila-archive:/data
-      - /mnt/HD/HD_a2/Public/HentaiLA:/library
+      - /mnt/HD/HD_a2/Public/Anime/Hentai:/library
