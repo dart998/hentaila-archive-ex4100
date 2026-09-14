@@ -366,6 +366,9 @@ func (s *Service) fetch(ctx context.Context, u string) (string, error) {
 		return "", e
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 HentaiLAArchive/0.1")
+	if cookie := strings.TrimSpace(s.db.GetSetting("hentaila_session_cookie")); cookie != "" {
+		req.Header.Set("Cookie", cookie)
+	}
 	resp, e := s.client.Do(req)
 	if e != nil {
 		return "", e

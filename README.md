@@ -28,7 +28,7 @@ El stack completo está en [`docker-compose.yml`](docker-compose.yml). Sus valor
 | Puerto web | `8091` |
 | Datos y SQLite | `/mnt/HD/HD_a2/Public/hentaila-archive` |
 | Vídeos | `/mnt/HD/HD_a2/Public/Anime/Hentai` |
-| Imagen | `ovelayos/hentaila-archive-ex4100:0.1.2` |
+| Imagen | `ovelayos/hentaila-archive-ex4100:0.1.3` |
 
 Después de desplegar:
 
@@ -81,12 +81,12 @@ Se indexan `.mkv`, `.mp4`, `.avi`, `.webm`, `.m4v` y `.mov`. La cookie se muestr
 
 ## Build y publicación
 
-El workflow `.github/workflows/docker.yml` comprueba el changelog, compila para ARMv7 y publica las etiquetas `0.1.2` y `latest` en Docker Hub. El repositorio necesita los secretos `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` y `PORTAINER_WEBHOOK_URL`.
+El workflow `.github/workflows/docker.yml` comprueba el changelog, compila para ARMv7 y publica las etiquetas `0.1.3` y `latest` en Docker Hub. El repositorio necesita los secretos `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` y `PORTAINER_WEBHOOK_URL`.
 
 Build local con Docker Buildx:
 
 ```sh
-./build.sh 0.1.2
+./build.sh 0.1.3
 ```
 
 ## Seguridad y alcance

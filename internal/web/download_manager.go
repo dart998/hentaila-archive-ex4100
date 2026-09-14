@@ -35,15 +35,19 @@ var downloadStates=struct{sync.RWMutex;m map[string]*seriesDownloadState}{m:map[
 var downloadCancels=struct{sync.Mutex;m map[string]context.CancelFunc}{m:map[string]context.CancelFunc{}}
 var downloadQueueMu sync.Mutex
 var megaDownloadRE=regexp.MustCompile(`server:"Mega",url:"([^"]+)"`)
+var errDownloadSeriesNotFound=errors.New("serie no encontrada")
+var errDownloadSeriesWithoutEpisodes=errors.New("sin episodios")
 
 func (s *Server) persistDownloadState(st *seriesDownloadState){b,_:=json.Marshal(st);_=s.db.SetSetting("download_state_"+st.Slug,string(b))}
 func (s *Server) setDL(st *seriesDownloadState,f func(*seriesDownloadState)){downloadStates.Lock();f(st);cp:=*st;cp.Episodes=append([]downloadEpisodeState(nil),st.Episodes...);downloadStates.Unlock();s.persistDownloadState(&cp)}
 func episodeState(st *seriesDownloadState,ep int)*downloadEpisodeState{for i:=range st.Episodes{if st.Episodes[i].Episode==ep{return &st.Episodes[i]}};return nil}
 
+func (s *Server) downloadItem(ctx context.Context,slug string)(hentaila.Item,int,error){item,ok:=s.itemForSlug(slug);total:=0;if ok{total=item.Total;if total<1{total=s.db.SeriesEpisodeCount(slug)};if total>0{return item,total,nil}};if e:=s.crawl.RunTarget(ctx,slug);e!=nil{if strings.Contains(e.Error(),"404"){return hentaila.Item{},0,errDownloadSeriesNotFound};return hentaila.Item{},0,fmt.Errorf("no se pudo indexar la serie desde HentaiLA: %w",e)};item,ok=s.itemForSlug(slug);if !ok{return hentaila.Item{},0,errDownloadSeriesNotFound};total=item.Total;if total<1{total=s.db.SeriesEpisodeCount(slug)};if total<1{return item,0,errDownloadSeriesWithoutEpisodes};return item,total,nil}
+
 func (s *Server) downloadSeriesAPI(w http.ResponseWriter,r *http.Request){
 	if r.Method!=http.MethodPost{http.Error(w,"method not allowed",405);return};if e:=r.ParseForm();e!=nil{http.Error(w,e.Error(),400);return};slug:=strings.TrimSpace(r.FormValue("slug"));if slug==""{http.Error(w,"serie no encontrada",404);return}
 	if r.FormValue("action")=="cancel"{s.cancelSeriesDownload(w,slug);return}
-	item,ok:=s.itemForSlug(slug);if !ok{http.Error(w,"serie no encontrada",404);return};total:=item.Total;if total<1{total=s.db.SeriesEpisodeCount(slug)};if total<1{http.Error(w,"sin episodios",409);return}
+	item,total,e:=s.downloadItem(r.Context(),slug);if e!=nil{switch{case errors.Is(e,errDownloadSeriesNotFound):http.Error(w,"serie no encontrada",404);case errors.Is(e,errDownloadSeriesWithoutEpisodes):http.Error(w,"sin episodios",409);default:http.Error(w,e.Error(),502)};return}
 	if lib,e:=libraryindex.Scan(s.libraryRoot);e==nil{_=s.db.ReplaceLibrary(lib)};force:=r.FormValue("force_unplayable")=="1";if !force{var bad []int;for ep:=1;ep<=total;ep++{if info,e:=s.localEpisode(slug,ep);e==nil&&info.Available&&!info.BrowserPlayable{bad=append(bad,ep)}};if len(bad)>0{w.Header().Set("Content-Type","application/json");w.WriteHeader(http.StatusConflict);_=json.NewEncoder(w).Encode(map[string]any{"requires_confirmation":true,"unplayable_episodes":bad});return}}
 	downloadStates.Lock();if x:=downloadStates.m[slug];x!=nil&&x.Running{downloadStates.Unlock();http.Error(w,"descarga en curso",409);return};st:=&seriesDownloadState{Slug:slug,Running:true,Total:total,Started:time.Now().Format(time.RFC3339),Episodes:make([]downloadEpisodeState,total),ForceUnplayable:force};for i:=1;i<=total;i++{st.Episodes[i-1]=downloadEpisodeState{Episode:i,Status:"pending"}};downloadStates.m[slug]=st;downloadStates.Unlock()
 	ctx,cancel:=context.WithCancel(context.Background());downloadCancels.Lock();downloadCancels.m[slug]=cancel;downloadCancels.Unlock();s.persistDownloadState(st);go s.runMegaSeries(ctx,item,st);w.Header().Set("Content-Type","application/json");w.WriteHeader(http.StatusAccepted);_=json.NewEncoder(w).Encode(st)

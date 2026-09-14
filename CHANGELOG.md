@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.3] - 2026-09-14
+
+### Corregido
+- La descarga masiva indexa bajo demanda las series abiertas directamente desde el catálogo aunque no estén en las listas personales ni se hayan indexado previamente en SQLite.
+- El crawler envía la cookie de sesión guardada al solicitar la ficha de una serie, para que el indexado bajo demanda use la misma sesión de HentaiLA.
+
 ## [0.1.2] - 2026-09-14
 
 ### Cambiado
