@@ -68,3 +68,15 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq "${IMAGE_NAME}:${APP_VERSION}" docker-compose.yml || { echo "docker-compose.yml does not point to ${APP_VERSION}"; exit 1; }
+      - name: Redeploy Portainer stack
+        shell: bash
+        env:
+          PORTAINER_WEBHOOK_URL: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          test -n "${PORTAINER_WEBHOOK_URL}"
+          curl --fail --silent --show-error \
+            --request POST \
+            --retry 3 \
+            --retry-delay 5 \
+            "${PORTAINER_WEBHOOK_URL}"
