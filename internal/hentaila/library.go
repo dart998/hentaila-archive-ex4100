@@ -93,7 +93,7 @@ var (
 	reIntField    = func(name string) *regexp.Regexp { return regexp.MustCompile(regexp.QuoteMeta(name) + `\s*:\s*(-?\d+|null)`) }
 	reBoolField   = func(name string) *regexp.Regexp { return regexp.MustCompile(regexp.QuoteMeta(name) + `\s*:\s*(true|false)`) }
 	reStringField = func(name string) *regexp.Regexp { return regexp.MustCompile(regexp.QuoteMeta(name) + `\s*:\s*("(?:\\.|[^"\\])*")`) }
-	reAlias       = regexp.MustCompile(`("(?:\\.|[^"\\])*")\s*:\s*("(?:\\.|[^"\\])*")`)
+	reAlias       = regexp.MustCompile(`(?:"((?:\\.|[^"\\])*)"|([A-Za-z0-9_-]+))\s*:\s*("(?:\\.|[^"\\])*")`)
 )
 
 func jsString(v string) string {
@@ -206,7 +206,10 @@ func parseLibraryEntries(body string) ([]Item, error) {
 		}
 		aka := extractObject(media, "aka")
 		for _, m := range reAlias.FindAllStringSubmatch(aka, -1) {
-			if len(m) == 3 { it.Aliases[jsString(m[1])] = jsString(m[2]) }
+			if len(m) != 4 { continue }
+			key := m[2]
+			if m[1] != "" { key = jsString(`"` + m[1] + `"`) }
+			it.Aliases[key] = jsString(m[3])
 		}
 		if strings.TrimSpace(it.Title) != "" { items = append(items, it) }
 	}
