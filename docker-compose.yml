@@ -1,0 +1,36 @@
+version: "2.4"
+
+services:
+  hentaila-archive:
+    image: ${ARCHIVE_IMAGE:-ovelayos/hentaila-archive-ex4100:0.1.0}
+    container_name: ${CONTAINER_NAME:-hentaila-archive}
+    hostname: ${HOSTNAME:-hentaila-archive}
+    restart: unless-stopped
+
+    ports:
+      - "${WEB_PORT:-8091}:8080"
+
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      HENTAILA_BASE_URL: ${HENTAILA_BASE_URL:-https://hentaila.com}
+      ARCHIVE_DB: /data/db/archive.sqlite
+      ARCHIVE_DATA_DIR: /data
+      ARCHIVE_SITE_DIR: /data/site
+      ARCHIVE_METADATA_DIR: /data/metadata
+      ARCHIVE_IMAGES_DIR: /data/images
+      ARCHIVE_VIDEO_DIR: /library
+      CRAWLER_ENABLED: ${CRAWLER_ENABLED:-true}
+      CRAWLER_INTERVAL: ${CRAWLER_INTERVAL:-30m}
+      CRAWLER_BATCH_SIZE: ${CRAWLER_BATCH_SIZE:-3}
+      CRAWLER_CONCURRENCY: ${CRAWLER_CONCURRENCY:-1}
+      MIRROR_SERIES_LIMIT: ${MIRROR_SERIES_LIMIT:-3}
+      PREFERRED_PROVIDER: ${PREFERRED_PROVIDER:-mega}
+      PROVIDER_ORDER: ${PROVIDER_ORDER:-mega,yourupload,streamwish,mp4upload,vidhide,voe}
+      PROVIDER_FALLBACK: ${PROVIDER_FALLBACK:-true}
+      DOWNLOAD_VIDEOS: ${DOWNLOAD_VIDEOS:-false}
+      VIDEO_DOWNLOAD_AUTHORIZED: ${VIDEO_DOWNLOAD_AUTHORIZED:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+    volumes:
+      - /mnt/HD/HD_a2/Public/hentaila-archive:/data
+      - /mnt/HD/HD_a2/Public/HentaiLA:/library
