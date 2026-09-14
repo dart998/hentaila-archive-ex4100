@@ -47,6 +47,7 @@ type avSeries struct {
 type adminData struct {
 	Version, CommitSHA, CommitShort, CommitURL                                           string
 	Mirror                                                                               sitemirror.State
+	HentaiLACookie                                                                       string
 	HentaiLACookieConfigured                                                             bool
 	HLASyncAt, HLASyncError                                                              string
 	HLAWatching, HLACompleted, HLAPlanned, HLAOnHold, HLADropped, HLALocal, HLAUnmatched int
@@ -136,7 +137,7 @@ func (s *Server) admin(w http.ResponseWriter, r *http.Request) {
 	if s.commitSHA != "" && s.commitSHA != "unknown" {
 		commitURL = "https://github.com/dart998/hentaila-archive-ex4100/commit/" + s.commitSHA
 	}
-	d := adminData{Version: s.version, CommitSHA: s.commitSHA, CommitShort: short, CommitURL: commitURL, Mirror: s.mirror.Snapshot(), HentaiLACookieConfigured: s.mirror.HasSessionCookie(), HLASyncAt: s.db.GetSetting("hentaila_library_updated"), HLASyncError: s.db.GetSetting("hentaila_library_error"), HLAWatching: counts[0], HLAPlanned: counts[1], HLACompleted: counts[2], HLAOnHold: counts[3], HLADropped: counts[4], HLALocal: local, HLAUnmatched: unmatched, HLASeries: series, Library: items, MALUsername: s.db.GetSetting("mal_username")}
+	d := adminData{Version: s.version, CommitSHA: s.commitSHA, CommitShort: short, CommitURL: commitURL, Mirror: s.mirror.Snapshot(), HentaiLACookie: s.db.GetSetting("hentaila_session_cookie"), HentaiLACookieConfigured: s.mirror.HasSessionCookie(), HLASyncAt: s.db.GetSetting("hentaila_library_updated"), HLASyncError: s.db.GetSetting("hentaila_library_error"), HLAWatching: counts[0], HLAPlanned: counts[1], HLACompleted: counts[2], HLAOnHold: counts[3], HLADropped: counts[4], HLALocal: local, HLAUnmatched: unmatched, HLASeries: series, Library: items, MALUsername: s.db.GetSetting("mal_username")}
 	if e = s.tmpl.ExecuteTemplate(w, "admin.html", d); e != nil {
 		http.Error(w, e.Error(), 500)
 	}
@@ -157,15 +158,7 @@ func (s *Server) settings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	if r.FormValue("clear_hentaila_cookie") == "1" {
-		if e := s.db.SetSetting("hentaila_session_cookie", ""); e != nil {
-			http.Error(w, e.Error(), 500)
-			return
-		}
-		_ = s.db.SetSetting("hentaila_library_json", "")
-		_ = s.db.SetSetting("hentaila_library_updated", "")
-		s.mirror.SetSessionCookie("")
-	} else if cookie := strings.TrimSpace(r.FormValue("hentaila_session_cookie")); cookie != "" {
+	if cookie := strings.TrimSpace(r.FormValue("hentaila_session_cookie")); cookie != "" {
 		if e := s.db.SetSetting("hentaila_session_cookie", cookie); e != nil {
 			http.Error(w, e.Error(), 500)
 			return

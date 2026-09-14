@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1] - 2026-09-14
+
+### Cambiado
+- La cookie de HentaiLA se muestra en texto visible y permanece cargada en el formulario después de guardarla.
+- Se elimina el control para borrar la cookie desde el panel de administración.
+- Se elimina el banner promocional superior del sitio espejado.
+
 ## [0.1.0] - 2026-09-14
 
 ### Añadido
