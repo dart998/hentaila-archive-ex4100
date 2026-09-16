@@ -1,11 +1,17 @@
 # Changelog
 
+## [0.1.7] - 2026-09-17
+
+### Corregido
+- Elimina directamente el bloque superior rojo `header > div.bg-[#f87171].text-white`, evitando que el banner promocional quede vacío ocupando 56 px tras retirar su contenido.
+
 ## [0.1.6] - 2026-09-17
 
 ### Corregido
-- Se revierte la interceptación global de `http.DefaultTransport` introducida en 0.1.5 porque podía alterar el HTML antes de que Svelte aplicase su layout.
-- La limpieza de anuncios elimina únicamente los wrappers exactos observados para `Ads 728x90` y `Ads 300x250`, sin subir por contenedores de layout.
-- El banner superior de Brazzers vuelve a eliminarse por contenido, sin depender de su posición vertical.
+- Se retira la interceptación global de `http.DefaultTransport` introducida en 0.1.5.
+- La limpieza de anuncios queda limitada a los wrappers exactos de los iframes `Ads 728x90` y `Ads 300x250` de `adtng.com`, sin ascender por contenedores del layout.
+- Se elimina `collapseEpisodeGap()` para evitar modificar bloques legítimos de la página.
+- El banner superior promocional vuelve a eliminarse por contenido sin depender de su posición vertical.
 
 ## [0.1.5] - 2026-09-17
 
@@ -16,11 +22,11 @@
 ## [0.1.4] - 2026-09-17
 
 ### Cambiado
-- El mirror deja de limitarse a tres series: `MIRROR_SERIES_LIMIT` pasa a `0` por defecto para permitir archivar el catálogo completo.
+- `MIRROR_SERIES_LIMIT` pasa a `0` por defecto, eliminando el límite piloto de tres series y permitiendo espejar el catálogo completo.
 
 ### Corregido
-- El matching de carpetas respeta el número final de una serie para evitar que secuelas como `Onichichi 2` se confundan con `Onichichi`.
-- Las páginas de episodio eliminan contenedores publicitarios vacíos que dejaban un hueco vertical sobre el reproductor.
+- El matching local conserva y compara el número/secuela del título antes de aceptar coincidencias por stem o alias, evitando que series como `Onichichi 2` reutilicen por error la carpeta de `Onichichi`.
+- Las páginas de episodio colapsan contenedores vacíos residuales para evitar huecos dejados por bloques publicitarios filtrados.
 
 ## [0.1.3] - 2026-09-14
 
