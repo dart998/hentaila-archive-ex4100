@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] - 2026-09-17
+
+### Corregido
+- Los banners publicitarios de `adtng.com`, incluidos los formatos `Ads 728x90` y `Ads 300x250`, eliminan también su contenedor para no dejar huecos vacíos en las páginas.
+- La limpieza se vuelve a aplicar tras la hidratación mediante `MutationObserver`, cubriendo anuncios que HentaiLA inserte dinámicamente.
+
 ## [0.1.4] - 2026-09-17
 
 ### Cambiado

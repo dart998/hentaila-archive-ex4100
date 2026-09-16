@@ -2,7 +2,7 @@ version: "2.4"
 
 services:
   hentaila-archive:
-    image: ${ARCHIVE_IMAGE:-ovelayos/hentaila-archive-ex4100:0.1.4}
+    image: ${ARCHIVE_IMAGE:-ovelayos/hentaila-archive-ex4100:0.1.5}
     container_name: ${CONTAINER_NAME:-hentaila-archive}
     hostname: ${HOSTNAME:-hentaila-archive}
     restart: unless-stopped
