@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.4] - 2026-09-17
+
+### Cambiado
+- El mirror deja de limitarse a tres series: `MIRROR_SERIES_LIMIT` pasa a `0` por defecto para permitir archivar el catálogo completo.
+
+### Corregido
+- El matching de carpetas respeta el número final de una serie para evitar que secuelas como `Onichichi 2` se confundan con `Onichichi`.
+- Las páginas de episodio eliminan contenedores publicitarios vacíos que dejaban un hueco vertical sobre el reproductor.
+
 ## [0.1.3] - 2026-09-14
 
 ### Corregido

@@ -25,6 +25,7 @@ func seriesStem(s string) string {
 }
 func seasonNumber(s string) int { m:=seasonNumberRE.FindStringSubmatch(s);if len(m)>0{for _,v:=range m[1:]{if v!=""{n,_:=strconv.Atoi(v);return n}}};if m:=trailingSeasonRE.FindStringSubmatch(strings.TrimSpace(s));len(m)>1{n,_:=strconv.Atoi(m[1]);return n};return 0 }
 func significantAlias(s string) bool { n:=normalizeName(s);return len(n)>=5 && n!="season" && n!="movie" && n!="special" }
+func compatibleSeriesNumber(requested, local string) bool { r,l:=seasonNumber(requested),seasonNumber(local);if r>0{return l==r};return l<=1 }
 
 func localFolderCandidates(it hentaila.Item, lib []database.LibraryItem) []localFolderCandidate {
 	candidates:=[]string{it.Title};for _,v:=range it.Aliases{if strings.TrimSpace(v)!=""{candidates=append(candidates,v)}}
@@ -32,6 +33,7 @@ func localFolderCandidates(it hentaila.Item, lib []database.LibraryItem) []local
 	for idx,c:=range candidates{n:=normalizeName(c);if n!=""{exact[n]=true};st:=seriesStem(c);if st!=""{stems[st]=true};if idx>0&&significantAlias(c){aliases=append(aliases,n)}}
 	out:=make([]localFolderCandidate,0)
 	for _,li:=range lib{
+		if !compatibleSeriesNumber(it.Title,li.Name){continue}
 		n:=normalizeName(li.Name);rank:=99
 		if exact[n]{rank=0}else if st:=seriesStem(li.Name);st!=""&&stems[st]{rank=1}else{for _,a:=range aliases{if strings.HasPrefix(n,a)||strings.Contains(n,a){rank=2;break}}}
 		if rank<99{out=append(out,localFolderCandidate{Item:li,Rank:rank})}

@@ -28,7 +28,7 @@ El stack completo está en [`docker-compose.yml`](docker-compose.yml). Sus valor
 | Puerto web | `8091` |
 | Datos y SQLite | `/mnt/HD/HD_a2/Public/hentaila-archive` |
 | Vídeos | `/mnt/HD/HD_a2/Public/Anime/Hentai` |
-| Imagen | `ovelayos/hentaila-archive-ex4100:0.1.3` |
+| Imagen | `ovelayos/hentaila-archive-ex4100:0.1.4` |
 
 Después de desplegar:
 
@@ -37,16 +37,11 @@ Después de desplegar:
 3. pulsa **Actualizar listas HLA**;
 4. pulsa **Reindexar /library**;
 5. pulsa **Descargar / actualizar sitio**;
-6. valida las tres series piloto en `http://<EX4100>:8091/`.
+6. valida el catálogo en `http://<EX4100>:8091/`.
 
-## Piloto de tres series
+## Catálogo completo
 
-El stack arranca con dos límites prudentes:
-
-- `MIRROR_SERIES_LIMIT=3`: solo admite tres slugs distintos de `/media/...` durante la sincronización del sitio;
-- `CRAWLER_BATCH_SIZE=3`: procesa tres series por lote.
-
-Las series de las listas personales tienen prioridad. Para pasar al catálogo completo, cambia `MIRROR_SERIES_LIMIT` a `0` y vuelve a desplegar el stack. El valor `0` significa «sin límite». Puedes aumentar también `CRAWLER_BATCH_SIZE` si el EX4100 mantiene una carga aceptable.
+El stack usa `MIRROR_SERIES_LIMIT=0` por defecto, por lo que la sincronización del sitio puede admitir todos los slugs `/media/...` descubiertos. `CRAWLER_BATCH_SIZE=3` sigue limitando cuántas series procesa el crawler en cada lote para mantener una carga razonable en el EX4100.
 
 ## Persistencia
 
@@ -71,7 +66,7 @@ Se indexan `.mkv`, `.mp4`, `.avi`, `.webm`, `.m4v` y `.mov`. La cookie se muestr
 | `WEB_PORT` | `8091` | Puerto publicado |
 | `TZ` | `Europe/Madrid` | Zona horaria |
 | `HENTAILA_BASE_URL` | `https://hentaila.com` | Origen del mirror |
-| `MIRROR_SERIES_LIMIT` | `3` | Series del piloto; `0` para todas |
+| `MIRROR_SERIES_LIMIT` | `0` | Sin límite de series del catálogo |
 | `CRAWLER_ENABLED` | `true` | Activa el crawler periódico |
 | `CRAWLER_INTERVAL` | `30m` | Intervalo del crawler |
 | `CRAWLER_BATCH_SIZE` | `3` | Series procesadas por lote |
@@ -81,12 +76,12 @@ Se indexan `.mkv`, `.mp4`, `.avi`, `.webm`, `.m4v` y `.mov`. La cookie se muestr
 
 ## Build y publicación
 
-El workflow `.github/workflows/docker.yml` comprueba el changelog, compila para ARMv7 y publica las etiquetas `0.1.3` y `latest` en Docker Hub. El repositorio necesita los secretos `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` y `PORTAINER_WEBHOOK_URL`.
+El workflow `.github/workflows/docker.yml` comprueba el changelog, compila para ARMv7 y publica las etiquetas `0.1.4` y `latest` en Docker Hub. El repositorio necesita los secretos `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` y `PORTAINER_WEBHOOK_URL`.
 
 Build local con Docker Buildx:
 
 ```sh
-./build.sh 0.1.3
+./build.sh 0.1.4
 ```
 
 ## Seguridad y alcance
