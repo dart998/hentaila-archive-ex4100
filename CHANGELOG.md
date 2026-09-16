@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6] - 2026-09-17
+
+### Corregido
+- Se revierte la interceptación global de `http.DefaultTransport` introducida en 0.1.5 porque podía alterar el HTML antes de que Svelte aplicase su layout.
+- La limpieza de anuncios elimina únicamente los wrappers exactos observados para `Ads 728x90` y `Ads 300x250`, sin subir por contenedores de layout.
+- El banner superior de Brazzers vuelve a eliminarse por contenido, sin depender de su posición vertical.
+
 ## [0.1.5] - 2026-09-17
 
 ### Corregido
