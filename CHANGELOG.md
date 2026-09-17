@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.8] - 2026-09-17
+
+### Corregido
+- Una descarga finalizada deja de bloquear una nueva comprobación de episodios: al volver a pulsar descargar se reescanea la biblioteca y se inicia un lote nuevo con el estado actual.
+
+### Diagnóstico
+- Se añaden logs `[MEGA DEBUG]` para registrar de forma segura cómo se extraen e interpretan las URL de Mega, ocultando la clave de descifrado y sin registrar cookies.
+
 ## [0.1.7] - 2026-09-17
 
 ### Corregido
