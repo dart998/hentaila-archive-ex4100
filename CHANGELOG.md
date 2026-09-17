@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9] - 2026-09-17
+
+### Corregido
+- Las descargas Mega aceptan tanto el formato moderno `/file/HANDLE#KEY` como el formato legacy `/file/!HANDLE!KEY` que HentaiLA todavía usa en algunas series.
+- Los logs `[MEGA DEBUG]` ocultan también la clave de los enlaces legacy con `!handle!key`.
+- El botón de descarga de serie ya no muestra el cuadro de confirmación nativo del navegador; inicia directamente la comprobación y usa el modal integrado de progreso.
+
 ## [0.1.8] - 2026-09-17
 
 ### Corregido
